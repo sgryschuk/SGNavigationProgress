@@ -33,6 +33,12 @@ NSInteger const SGProgresstagId = 2221222323;
 		progressView.backgroundColor = self.navigationBar.tintColor;
 		[self.navigationBar addSubview:progressView];
 	}
+	else
+	{
+		CGRect progressFrame = progressView.frame;
+		progressFrame.origin.y = y;
+		progressView.frame = progressFrame;
+	}
 	
 	return progressView;
 }
