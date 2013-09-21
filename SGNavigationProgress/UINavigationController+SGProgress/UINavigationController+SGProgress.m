@@ -8,11 +8,45 @@
 
 #import "UINavigationController+SGProgress.h"
 
-NSInteger const SGProgresstagId = 2221222323;
+NSInteger const SGProgresstagId = 222122323;
+NSInteger const SGProgressMasktagId = 221222322;
+NSInteger const SGProgressMiniMasktagId = 221222321;
 
 @implementation UINavigationController (SGProgress)
 
+- (CGRect)getSGMaskFrame
+{
+	float navBarHeight = self.navigationBar.frame.size.height;
+	float navBarY = self.navigationBar.frame.origin.y;
+	
+	float width = self.view.frame.size.width;
+	float height = self.view.frame.size.height - navBarHeight - navBarY;
+	float x = 0;
+	float y = navBarHeight + navBarY;
+	
+	return CGRectMake(x, y, width, height);
+}
+
+- (CGRect)getSGMiniMaskFrame
+{
+	float width = self.navigationBar.frame.size.width;
+	float height = self.navigationBar.frame.size.height + self.navigationBar.frame.origin.y - 1;
+	
+	
+	return CGRectMake(0, 0, width, height);
+}
+
+- (UIColor *)getSGMaskColor
+{
+	return [UIColor colorWithWhite:0 alpha:0.4];
+}
+
 - (UIView *)setupSGProgressSubview
+{
+	return [self setupSGProgressSubviewWithTintColor:self.navigationBar.tintColor];
+}
+
+- (UIView *)setupSGProgressSubviewWithTintColor:(UIColor *)tintColor
 {
 	float height = 1;
 	float y = self.navigationBar.frame.size.height - height;
@@ -30,7 +64,7 @@ NSInteger const SGProgresstagId = 2221222323;
 	{
 		progressView = [[UIView alloc] initWithFrame:CGRectMake(0, y, 0, height)];
 		progressView.tag = SGProgresstagId;
-		progressView.backgroundColor = self.navigationBar.tintColor;
+		progressView.backgroundColor = tintColor;
 		[self.navigationBar addSubview:progressView];
 	}
 	else
@@ -43,6 +77,66 @@ NSInteger const SGProgresstagId = 2221222323;
 	return progressView;
 }
 
+- (void)setupSGProgressMask
+{
+	UIView *mask;
+	UIView *miniMask;
+	for (UIView *subview in [self.view subviews])
+	{
+		if (subview.tag == SGProgressMasktagId)
+		{
+			mask = subview;
+		}
+		
+		if (subview.tag == SGProgressMiniMasktagId)
+		{
+			miniMask = subview;
+		}
+	}
+
+	if(!mask)
+	{
+		mask = [[UIView alloc] initWithFrame:[self getSGMaskFrame]];
+		mask.tag = SGProgressMasktagId;
+		mask.backgroundColor = [self getSGMaskColor];
+		mask.alpha = 0;
+		
+		miniMask = [[UIView alloc] initWithFrame:[self getSGMiniMaskFrame]];
+		miniMask.tag = SGProgressMiniMasktagId;
+		miniMask.backgroundColor = [self getSGMaskColor];
+		miniMask.alpha = 0;
+		
+		[self.view addSubview:mask];
+		[self.view addSubview:miniMask];
+		[UIView animateWithDuration:0.2 animations:^{
+			mask.alpha = 1;
+			miniMask.alpha = 1;
+		}];
+	}
+	else
+	{
+		mask.frame = [self getSGMaskFrame];
+		miniMask.frame = [self getSGMiniMaskFrame];
+	}
+}
+
+- (void)removeSGMask
+{
+	for (UIView *subview in [self.view subviews])
+	{
+		if (subview.tag == SGProgressMasktagId || subview.tag == SGProgressMiniMasktagId)
+		{
+			[UIView animateWithDuration:0.3 animations:^{
+				subview.alpha = 0;
+			} completion:^(BOOL finished) {
+				[subview removeFromSuperview];
+				self.view.tintAdjustmentMode = UIViewTintAdjustmentModeNormal;
+			}];
+		}
+	}
+}
+
+
 - (void)showSGProgress
 {
 	[self showSGProgressWithDuration:3];
@@ -50,7 +144,12 @@ NSInteger const SGProgresstagId = 2221222323;
 
 - (void)showSGProgressWithDuration:(float)duration
 {
-	UIView *progressView = [self setupSGProgressSubview];
+	[self showSGProgressWithDuration:duration andTintColor:self.navigationBar.tintColor];
+}
+
+- (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor
+{
+	UIView *progressView = [self setupSGProgressSubviewWithTintColor:tintColor];
 	
 	float maxWidth = self.navigationBar.frame.size.width;
 	
@@ -64,8 +163,18 @@ NSInteger const SGProgresstagId = 2221222323;
 			progressView.alpha = 0;
 		} completion:^(BOOL finished) {
 			[progressView removeFromSuperview];
+			[self removeSGMask];
 		}];
 	}];
+}
+
+- (void)showSGProgressWithMaskAndDuration:(float)duration
+{
+	UIColor *tintColor = self.navigationBar.tintColor;
+	self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+	[self setupSGProgressMask];
+	[self showSGProgressWithDuration:duration andTintColor:tintColor];
+	
 }
 
 - (void)finishSGProgress
@@ -82,7 +191,22 @@ NSInteger const SGProgresstagId = 2221222323;
 	}
 }
 
+- (void)setSGProgressMaskWithPercentage:(float)percentage
+{
+	UIColor *tintColor = self.navigationBar.tintColor;
+	dispatch_async(dispatch_get_main_queue(), ^{
+		self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+		[self setupSGProgressMask];
+	});
+	[self setSGProgressPercentage:percentage andTintColor:tintColor];
+}
+
 - (void)setSGProgressPercentage:(float)percentage
+{
+	[self setSGProgressPercentage:percentage andTintColor:self.navigationBar.tintColor];
+}
+
+- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor
 {
 	if (percentage > 100.0)
 	{
@@ -95,7 +219,7 @@ NSInteger const SGProgresstagId = 2221222323;
 	
 	dispatch_async(dispatch_get_main_queue(), ^{
 		
-		UIView *progressView = [self setupSGProgressSubview];
+		UIView *progressView = [self setupSGProgressSubviewWithTintColor:tintColor];
 		float maxWidth = self.navigationBar.frame.size.width;
 		float progressWidth = maxWidth * (percentage / 100);
 		
@@ -113,6 +237,7 @@ NSInteger const SGProgresstagId = 2221222323;
 					progressView.alpha = 0;
 				} completion:^(BOOL finished) {
 					[progressView removeFromSuperview];
+					[self removeSGMask];
 				}];
 			}
 		}];
