@@ -207,6 +207,13 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 	}];
 }
 
+- (void)showSGProgressWithMaskAndDuration:(float)duration andTitle:(NSString *) title
+{
+	[self changeSGProgressWithTitle:title];
+	[self showSGProgressWithMaskAndDuration:duration];
+	
+}
+
 - (void)showSGProgressWithMaskAndDuration:(float)duration
 {
 	UIColor *tintColor = self.navigationBar.tintColor;

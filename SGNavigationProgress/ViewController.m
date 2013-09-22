@@ -28,7 +28,7 @@
 
 - (IBAction)startPressedWithMaskPressed:(id)sender
 {
-	[self.navigationController showSGProgressWithMaskAndDuration:4];
+	[self.navigationController showSGProgressWithMaskAndDuration:4 andTitle:@"Sending..."];
 }
 
 - (IBAction)startWithTitlePressed:(id)sender

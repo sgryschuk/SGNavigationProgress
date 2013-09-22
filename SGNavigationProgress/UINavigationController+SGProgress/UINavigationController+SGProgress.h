@@ -18,6 +18,7 @@
 - (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor;
 - (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor andTitle:(NSString *)title;
 - (void)showSGProgressWithMaskAndDuration:(float)duration;
+- (void)showSGProgressWithMaskAndDuration:(float)duration andTitle:(NSString *) title;
 
 
 - (void)setSGProgressPercentage:(float)percentage;
