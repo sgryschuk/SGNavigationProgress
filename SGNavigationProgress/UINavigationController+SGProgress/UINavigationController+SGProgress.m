@@ -136,7 +136,39 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 	}
 }
 
+- (void)resetTitle
+{
+	BOOL titleChanged = [[[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressTitleChanged] boolValue];
+	
+	if(titleChanged)
+	{
+		NSString *oldTitle = [[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressOldTitle];
+		//add animation
+		self.visibleViewController.navigationItem.title = oldTitle;
+	}
 
+	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kSGProgressTitleChanged];
+	[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kSGProgressOldTitle];
+	[[NSUserDefaults standardUserDefaults] synchronize];
+	
+}
+
+- (void)changeSGProgressWithTitle:(NSString *)title
+{
+	BOOL titleAlreadyChanged = [[[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressTitleChanged] boolValue];
+	if(!titleAlreadyChanged)
+	{
+		NSString *oldTitle = self.visibleViewController.navigationItem.title;
+		[[NSUserDefaults standardUserDefaults] setObject:oldTitle forKey:kSGProgressOldTitle];
+		[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kSGProgressTitleChanged];
+		[[NSUserDefaults standardUserDefaults] synchronize];
+		
+		//add animation
+		self.visibleViewController.navigationItem.title = title;
+	}
+}
+
+#pragma mark user functions
 - (void)showSGProgress
 {
 	[self showSGProgressWithDuration:3];
@@ -145,6 +177,12 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 - (void)showSGProgressWithDuration:(float)duration
 {
 	[self showSGProgressWithDuration:duration andTintColor:self.navigationBar.tintColor];
+}
+
+- (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
+	[self showSGProgressWithDuration:duration andTintColor:tintColor];
 }
 
 - (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor
@@ -164,6 +202,7 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 		} completion:^(BOOL finished) {
 			[progressView removeFromSuperview];
 			[self removeSGMask];
+			[self resetTitle];
 		}];
 	}];
 }
@@ -201,8 +240,20 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 	[self setSGProgressPercentage:percentage andTintColor:tintColor];
 }
 
+- (void)setSGProgressMaskWithPercentage:(float)percentage andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
+	[self setSGProgressMaskWithPercentage:percentage];
+}
+
 - (void)setSGProgressPercentage:(float)percentage
 {
+	[self setSGProgressPercentage:percentage andTintColor:self.navigationBar.tintColor];
+}
+
+- (void)setSGProgressPercentage:(float)percentage andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
 	[self setSGProgressPercentage:percentage andTintColor:self.navigationBar.tintColor];
 }
 
@@ -238,6 +289,7 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 				} completion:^(BOOL finished) {
 					[progressView removeFromSuperview];
 					[self removeSGMask];
+					[self resetTitle];
 				}];
 			}
 		}];

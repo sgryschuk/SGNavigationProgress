@@ -14,11 +14,12 @@
 - (IBAction)finishPressed:(id)sender;
 - (IBAction)startPressed:(id)sender;
 - (IBAction)startPressedWithMaskPressed:(id)sender;
+- (IBAction)startWithTitlePressed:(id)sender;
 
 - (IBAction)startPercentagePressed:(id)sender;
 - (IBAction)startMaskWithPercentagePressed:(id)sender;
+- (IBAction)startPercentageTitlePressed:(id)sender;
+- (IBAction)startMaskTitleWithPercentagePressed:(id)sender;
 
-- (void)runPercentageLoop;
-- (void)runMaskPercentageLoop;
 
 @end

@@ -31,6 +31,11 @@
 	[self.navigationController showSGProgressWithMaskAndDuration:4];
 }
 
+- (IBAction)startWithTitlePressed:(id)sender
+{
+	[self.navigationController showSGProgressWithDuration:4 andTintColor:self.navigationController.navigationBar.tintColor andTitle:@"Sending..." ];
+}
+
 - (IBAction)finishPressed:(id)sender
 {
 	[self.navigationController finishSGProgress];
@@ -44,6 +49,16 @@
 - (IBAction)startMaskWithPercentagePressed:(id)sender
 {
 	[self performSelectorInBackground:@selector(runMaskPercentageLoop) withObject:nil];
+}
+
+- (IBAction)startPercentageTitlePressed:(id)sender
+{
+	[self performSelectorInBackground:@selector(runTitlePercentageLoop) withObject:nil];
+}
+
+- (IBAction)startMaskTitleWithPercentagePressed:(id)sender
+{
+	[self performSelectorInBackground:@selector(runMaskTitlePercentageLoop) withObject:nil];
 }
 
 - (void)runPercentageLoop
@@ -73,6 +88,42 @@
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
 		[self.navigationController setSGProgressMaskWithPercentage:percentage];
+		if(percentage >= 100.0)
+		{
+			return;
+		}
+		
+		percentage = percentage + (arc4random() % 3);
+	}
+}
+
+- (void)runTitlePercentageLoop
+{
+	float percentage = 0;
+	
+	while (percentage <= 200)
+	{
+		NSLog(@"%f", percentage);
+		[NSThread sleepForTimeInterval:0.1];
+		[self.navigationController setSGProgressPercentage:percentage andTitle:@"Sending..."];
+		if(percentage >= 100.0)
+		{
+			return;
+		}
+		
+		percentage = percentage + (arc4random() % 3);
+	}
+}
+
+- (void)runMaskTitlePercentageLoop
+{
+	float percentage = 0;
+	
+	while (percentage <= 200)
+	{
+		NSLog(@"%f", percentage);
+		[NSThread sleepForTimeInterval:0.1];
+		[self.navigationController setSGProgressMaskWithPercentage:percentage andTitle:@"Sending..."];
 		if(percentage >= 100.0)
 		{
 			return;
