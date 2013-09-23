@@ -168,6 +168,39 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 	}
 }
 
+- (void)setTintModeAndSetupMask
+{
+	self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+	[self setupSGProgressMask];
+}
+
+- (void)viewUpdatesForPercentage:(float)percentage andTintColor:(UIColor *)tintColor
+{
+	UIView *progressView = [self setupSGProgressSubviewWithTintColor:tintColor];
+	float maxWidth = self.navigationBar.frame.size.width;
+	float progressWidth = maxWidth * (percentage / 100);
+	
+	
+	[UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+		CGRect progressFrame = progressView.frame;
+		progressFrame.size.width = progressWidth;
+		progressView.frame = progressFrame;
+		
+	} completion:^(BOOL finished)
+	 {
+		 if(percentage >= 100.0)
+		 {
+			 [UIView animateWithDuration:0.5 animations:^{
+				 progressView.alpha = 0;
+			 } completion:^(BOOL finished) {
+				 [progressView removeFromSuperview];
+				 [self removeSGMask];
+				 [self resetTitle];
+			 }];
+		 }
+	 }];
+}
+
 #pragma mark user functions
 - (void)showSGProgress
 {
@@ -240,10 +273,18 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 - (void)setSGProgressMaskWithPercentage:(float)percentage
 {
 	UIColor *tintColor = self.navigationBar.tintColor;
-	dispatch_async(dispatch_get_main_queue(), ^{
-		self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-		[self setupSGProgressMask];
-	});
+	
+	if([NSThread isMainThread])
+	{
+		[self setTintModeAndSetupMask];
+	}
+	else
+	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self setTintModeAndSetupMask];
+		});
+	}
+	
 	[self setSGProgressPercentage:percentage andTintColor:tintColor];
 }
 
@@ -275,32 +316,16 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 		percentage = 0;
 	}
 	
-	dispatch_async(dispatch_get_main_queue(), ^{
-		
-		UIView *progressView = [self setupSGProgressSubviewWithTintColor:tintColor];
-		float maxWidth = self.navigationBar.frame.size.width;
-		float progressWidth = maxWidth * (percentage / 100);
-		
-		
-		[UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
-			CGRect progressFrame = progressView.frame;
-			progressFrame.size.width = progressWidth;
-			progressView.frame = progressFrame;
-			
-		} completion:^(BOOL finished)
-		{
-			if(percentage >= 100.0)
-			{
-				[UIView animateWithDuration:0.5 animations:^{
-					progressView.alpha = 0;
-				} completion:^(BOOL finished) {
-					[progressView removeFromSuperview];
-					[self removeSGMask];
-					[self resetTitle];
-				}];
-			}
-		}];
-	});
+	if([NSThread isMainThread])
+	{
+		[self viewUpdatesForPercentage:percentage andTintColor:tintColor];
+	}
+	else
+	{
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self viewUpdatesForPercentage:percentage andTintColor:tintColor];
+		});
+	}
 }
 
 @end
