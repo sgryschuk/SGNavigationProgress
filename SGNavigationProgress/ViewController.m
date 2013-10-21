@@ -9,7 +9,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property(nonatomic, getter = isCanceled) BOOL canceled;
 @end
 
 @implementation ViewController
@@ -41,23 +41,33 @@
 	[self.navigationController finishSGProgress];
 }
 
+- (IBAction)cancelPressed:(id)sender
+{
+    self.canceled = YES;
+    [self.navigationController cancelSGProgress];
+}
+
 - (IBAction)startPercentagePressed:(id)sender
 {
+    self.canceled = NO;
 	[self performSelectorInBackground:@selector(runPercentageLoop) withObject:nil];
 }
 
 - (IBAction)startMaskWithPercentagePressed:(id)sender
 {
+    self.canceled = NO;
 	[self performSelectorInBackground:@selector(runMaskPercentageLoop) withObject:nil];
 }
 
 - (IBAction)startPercentageTitlePressed:(id)sender
 {
+    self.canceled = NO;
 	[self performSelectorInBackground:@selector(runTitlePercentageLoop) withObject:nil];
 }
 
 - (IBAction)startMaskTitleWithPercentagePressed:(id)sender
 {
+    self.canceled = NO;
 	[self performSelectorInBackground:@selector(runMaskTitlePercentageLoop) withObject:nil];
 }
 
@@ -65,7 +75,7 @@
 {
 	float percentage = 0;
 	
-	while (percentage <= 200)
+	while (percentage <= 200 && !self.canceled)
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
@@ -83,7 +93,7 @@
 {
 	float percentage = 0;
 	
-	while (percentage <= 200)
+	while (percentage <= 200 && !self.canceled)
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
@@ -101,7 +111,7 @@
 {
 	float percentage = 0;
 	
-	while (percentage <= 200)
+	while (percentage <= 200 && !self.canceled)
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
@@ -119,7 +129,7 @@
 {
 	float percentage = 0;
 	
-	while (percentage <= 200)
+	while (percentage <= 200 && !self.canceled)
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];

@@ -29,4 +29,5 @@
 
 
 - (void)finishSGProgress;
+- (void)cancelSGProgress;
 @end
