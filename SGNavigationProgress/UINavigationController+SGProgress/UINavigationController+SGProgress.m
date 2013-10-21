@@ -11,6 +11,7 @@
 NSInteger const SGProgresstagId = 222122323;
 NSInteger const SGProgressMasktagId = 221222322;
 NSInteger const SGProgressMiniMasktagId = 221222321;
+CGFloat const SGProgressBarHeight = 2.5;
 
 @implementation UINavigationController (SGProgress)
 
@@ -30,10 +31,9 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 - (CGRect)getSGMiniMaskFrame
 {
 	float width = self.navigationBar.frame.size.width;
-	float height = self.navigationBar.frame.size.height + self.navigationBar.frame.origin.y - 1;
-	
-	
-	return CGRectMake(0, 0, width, height);
+	float height = self.navigationBar.frame.size.height + self.navigationBar.frame.origin.y - SGProgressBarHeight;
+
+    return CGRectMake(0, 0, width, height);
 }
 
 - (UIColor *)getSGMaskColor
@@ -48,8 +48,7 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 
 - (UIView *)setupSGProgressSubviewWithTintColor:(UIColor *)tintColor
 {
-	float height = 1;
-	float y = self.navigationBar.frame.size.height - height;
+	float y = self.navigationBar.frame.size.height - SGProgressBarHeight;
 	
 	UIView *progressView;
 	for (UIView *subview in [self.navigationBar subviews])
@@ -62,7 +61,7 @@ NSInteger const SGProgressMiniMasktagId = 221222321;
 	
 	if(!progressView)
 	{
-		progressView = [[UIView alloc] initWithFrame:CGRectMake(0, y, 0, height)];
+		progressView = [[UIView alloc] initWithFrame:CGRectMake(0, y, 0, SGProgressBarHeight)];
 		progressView.tag = SGProgresstagId;
 		progressView.backgroundColor = tintColor;
 		[self.navigationBar addSubview:progressView];
