@@ -269,6 +269,21 @@ CGFloat const SGProgressBarHeight = 2.5;
 	}
 }
 
+- (void)cancelSGProgress {
+    UIView *progressView = [self setupSGProgressSubview];
+
+    if(progressView)
+    {
+        [UIView animateWithDuration:0.5 animations:^{
+            progressView.alpha = 0;
+        } completion:^(BOOL finished) {
+            [progressView removeFromSuperview];
+            [self removeSGMask];
+            [self resetTitle];
+        }];
+    }
+}
+
 - (void)setSGProgressMaskWithPercentage:(float)percentage
 {
 	UIColor *tintColor = self.navigationBar.tintColor;
