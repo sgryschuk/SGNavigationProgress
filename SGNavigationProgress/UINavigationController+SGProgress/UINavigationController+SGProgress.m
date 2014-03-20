@@ -9,37 +9,13 @@
 #import "UINavigationController+SGProgress.h"
 #import "SGProgressView.h"
 
+#define SGMaskColor [UIColor colorWithWhite:0 alpha:0.4]
+
 NSInteger const SGProgressMasktagId = 221222322;
 NSInteger const SGProgressMiniMasktagId = 221222321;
 CGFloat const SGProgressBarHeight = 2.5;
 
 @implementation UINavigationController (SGProgress)
-
-- (CGRect)getSGMaskFrame
-{
-	float navBarHeight = self.navigationBar.frame.size.height;
-	float navBarY = self.navigationBar.frame.origin.y;
-
-	float width = self.view.frame.size.width;
-	float height = self.view.frame.size.height - navBarHeight - navBarY;
-	float x = 0;
-	float y = navBarHeight + navBarY;
-
-	return CGRectMake(x, y, width, height);
-}
-
-- (CGRect)getSGMiniMaskFrame
-{
-	float width = self.navigationBar.frame.size.width;
-	float height = self.navigationBar.frame.size.height + self.navigationBar.frame.origin.y - SGProgressBarHeight;
-
-	return CGRectMake(0, 0, width, height);
-}
-
-- (UIColor *)getSGMaskColor
-{
-	return [UIColor colorWithWhite:0 alpha:0.4];
-}
 
 - (SGProgressView *)progressView
 {
@@ -65,47 +41,86 @@ CGFloat const SGProgressBarHeight = 2.5;
 	return _progressView;
 }
 
-- (void)setupSGProgressMask
+- (UIView *)topMask
 {
-	UIView *mask;
-	UIView *miniMask;
+	UIView *topMask;
+	for (UIView *subview in [self.view subviews])
+	{
+		if (subview.tag == SGProgressMiniMasktagId)
+		{
+			topMask = subview;
+		}
+	}
+	return topMask;
+}
+
+- (UIView *)bottomMask
+{
+	UIView *bottomMask;
 	for (UIView *subview in [self.view subviews])
 	{
 		if (subview.tag == SGProgressMasktagId)
 		{
-			mask = subview;
+			bottomMask = subview;
 		}
+	}
+	return bottomMask;
+}
 
-		if (subview.tag == SGProgressMiniMasktagId)
+- (BOOL)hasSGProgressMask
+{
+	for (UIView *subview in [self.view subviews])
+	{
+		if (subview.tag == SGProgressMiniMasktagId || subview.tag == SGProgressMasktagId)
 		{
-			miniMask = subview;
+			return YES;
 		}
 	}
+	return NO;
+}
 
-	if(!mask)
+- (void)setupSGProgressMask
+{
+	self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+
+	UIView *topMask = [self topMask];
+	UIView *bottomMask = [self bottomMask];
+
+	if (!topMask)
 	{
-		mask = [[UIView alloc] initWithFrame:[self getSGMaskFrame]];
-		mask.tag = SGProgressMasktagId;
-		mask.backgroundColor = [self getSGMaskColor];
-		mask.alpha = 0;
-
-		miniMask = [[UIView alloc] initWithFrame:[self getSGMiniMaskFrame]];
-		miniMask.tag = SGProgressMiniMasktagId;
-		miniMask.backgroundColor = [self getSGMaskColor];
-		miniMask.alpha = 0;
-
-		[self.view addSubview:mask];
-		[self.view addSubview:miniMask];
-		[UIView animateWithDuration:0.2 animations:^{
-			mask.alpha = 1;
-			miniMask.alpha = 1;
-		}];
+		topMask = [[UIView alloc] init];
+		topMask.tag = SGProgressMiniMasktagId;
+		topMask.backgroundColor = SGMaskColor;
+		topMask.alpha = 0;
+		[self.view addSubview:topMask];
 	}
-	else
+
+	if (!bottomMask)
 	{
-		mask.frame = [self getSGMaskFrame];
-		miniMask.frame = [self getSGMiniMaskFrame];
+		bottomMask = [[UIView alloc] init];
+		bottomMask.tag = SGProgressMasktagId;
+		bottomMask.backgroundColor = SGMaskColor;
+		bottomMask.alpha = 0;
+		[self.view addSubview:bottomMask];
 	}
+
+	[self updateSGProgressMaskFrame];
+
+	[UIView animateWithDuration:0.3 animations:^{
+		topMask.alpha = 1;
+		bottomMask.alpha = 1;
+	}];
+}
+
+- (void)updateSGProgressMaskFrame
+{
+	CGFloat width = CGRectGetWidth(self.view.bounds);
+	CGFloat height = CGRectGetMaxY(self.navigationBar.frame) - CGRectGetHeight([[self progressView] frame]);
+	[[self topMask] setFrame:CGRectMake(0, 0, width, height)];
+
+	CGRect slice, remainder;
+	CGRectDivide(self.view.bounds, &slice, &remainder, CGRectGetMaxY(self.navigationBar.frame) + 0.5, CGRectMinYEdge);
+	[[self bottomMask] setFrame:remainder];
 }
 
 - (void)removeSGMask
@@ -156,10 +171,24 @@ CGFloat const SGProgressBarHeight = 2.5;
 	}
 }
 
-- (void)setTintModeAndSetupMask
+#pragma mark - UIViewController
+
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-	self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-	[self setupSGProgressMask];
+	if ([self hasSGProgressMask])
+	{
+		__weak typeof(self)weakSelf = self;
+		__block NSTimeInterval timeInterval = 0;
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+			while (timeInterval <= duration) {
+				[NSThread sleepForTimeInterval:0.1];
+				timeInterval += 0.1;
+				dispatch_async(dispatch_get_main_queue(), ^{
+					[weakSelf updateSGProgressMaskFrame];
+				});
+			}
+		});
+	}
 }
 
 #pragma mark user functions
@@ -208,56 +237,34 @@ CGFloat const SGProgressBarHeight = 2.5;
 - (void)showSGProgressWithMaskAndDuration:(float)duration
 {
 	UIColor *tintColor = self.navigationBar.tintColor;
-	self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
 	[self setupSGProgressMask];
 	[self showSGProgressWithDuration:duration andTintColor:tintColor];
-
 }
 
 - (void)finishSGProgress
 {
 	SGProgressView *progressView = [self progressView];
-
-	if(progressView)
-	{
-		[UIView animateWithDuration:0.1 animations:^{
-			CGRect progressFrame = progressView.frame;
-			progressFrame.size.width = progressFrame.size.width + 1;
-			progressView.frame = progressFrame;
-		}];
-	}
+	[UIView animateWithDuration:0.1 animations:^{
+		progressView.progress = 1;
+	}];
 }
 
-- (void)cancelSGProgress {
+- (void)cancelSGProgress
+{
 	SGProgressView *progressView = [self progressView];
-
-	if(progressView)
-	{
-		[UIView animateWithDuration:0.5 animations:^{
-			progressView.alpha = 0;
-		} completion:^(BOOL finished) {
-			[progressView removeFromSuperview];
-			[self removeSGMask];
-			[self resetTitle];
-		}];
-	}
+	[UIView animateWithDuration:0.5 animations:^{
+		progressView.alpha = 0;
+	} completion:^(BOOL finished) {
+		[progressView removeFromSuperview];
+		[self removeSGMask];
+		[self resetTitle];
+	}];
 }
 
 - (void)setSGProgressMaskWithPercentage:(float)percentage
 {
 	UIColor *tintColor = self.navigationBar.tintColor;
-
-	if([NSThread isMainThread])
-	{
-		[self setTintModeAndSetupMask];
-	}
-	else
-	{
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self setTintModeAndSetupMask];
-		});
-	}
-
+	[self setupSGProgressMask];
 	[self setSGProgressPercentage:percentage andTintColor:tintColor];
 }
 
