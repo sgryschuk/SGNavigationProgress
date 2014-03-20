@@ -19,12 +19,12 @@ CGFloat const SGProgressBarHeight = 2.5;
 {
 	float navBarHeight = self.navigationBar.frame.size.height;
 	float navBarY = self.navigationBar.frame.origin.y;
-	
+
 	float width = self.view.frame.size.width;
 	float height = self.view.frame.size.height - navBarHeight - navBarY;
 	float x = 0;
 	float y = navBarHeight + navBarY;
-	
+
 	return CGRectMake(x, y, width, height);
 }
 
@@ -33,7 +33,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	float width = self.navigationBar.frame.size.width;
 	float height = self.navigationBar.frame.size.height + self.navigationBar.frame.origin.y - SGProgressBarHeight;
 
-    return CGRectMake(0, 0, width, height);
+	return CGRectMake(0, 0, width, height);
 }
 
 - (UIColor *)getSGMaskColor
@@ -49,7 +49,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 - (UIView *)setupSGProgressSubviewWithTintColor:(UIColor *)tintColor
 {
 	float y = self.navigationBar.frame.size.height - SGProgressBarHeight;
-	
+
 	UIView *progressView;
 	for (UIView *subview in [self.navigationBar subviews])
 	{
@@ -58,7 +58,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 			progressView = subview;
 		}
 	}
-	
+
 	if(!progressView)
 	{
 		progressView = [[UIView alloc] initWithFrame:CGRectMake(0, y, 0, SGProgressBarHeight)];
@@ -72,7 +72,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 		progressFrame.origin.y = y;
 		progressView.frame = progressFrame;
 	}
-	
+
 	return progressView;
 }
 
@@ -86,7 +86,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 		{
 			mask = subview;
 		}
-		
+
 		if (subview.tag == SGProgressMiniMasktagId)
 		{
 			miniMask = subview;
@@ -99,12 +99,12 @@ CGFloat const SGProgressBarHeight = 2.5;
 		mask.tag = SGProgressMasktagId;
 		mask.backgroundColor = [self getSGMaskColor];
 		mask.alpha = 0;
-		
+
 		miniMask = [[UIView alloc] initWithFrame:[self getSGMiniMaskFrame]];
 		miniMask.tag = SGProgressMiniMasktagId;
 		miniMask.backgroundColor = [self getSGMaskColor];
 		miniMask.alpha = 0;
-		
+
 		[self.view addSubview:mask];
 		[self.view addSubview:miniMask];
 		[UIView animateWithDuration:0.2 animations:^{
@@ -138,7 +138,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 - (void)resetTitle
 {
 	BOOL titleChanged = [[[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressTitleChanged] boolValue];
-	
+
 	if(titleChanged)
 	{
 		NSString *oldTitle = [[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressOldTitle];
@@ -149,7 +149,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kSGProgressTitleChanged];
 	[[NSUserDefaults standardUserDefaults] setObject:@"" forKey:kSGProgressOldTitle];
 	[[NSUserDefaults standardUserDefaults] synchronize];
-	
+
 }
 
 - (void)changeSGProgressWithTitle:(NSString *)title
@@ -161,7 +161,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 		[[NSUserDefaults standardUserDefaults] setObject:oldTitle forKey:kSGProgressOldTitle];
 		[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kSGProgressTitleChanged];
 		[[NSUserDefaults standardUserDefaults] synchronize];
-		
+
 		//add animation
 		self.visibleViewController.navigationItem.title = title;
 	}
@@ -178,13 +178,13 @@ CGFloat const SGProgressBarHeight = 2.5;
 	UIView *progressView = [self setupSGProgressSubviewWithTintColor:tintColor];
 	float maxWidth = self.navigationBar.frame.size.width;
 	float progressWidth = maxWidth * (percentage / 100);
-	
-	
+
+
 	[UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
 		CGRect progressFrame = progressView.frame;
 		progressFrame.size.width = progressWidth;
 		progressView.frame = progressFrame;
-		
+
 	} completion:^(BOOL finished)
 	 {
 		 if(percentage >= 100.0)
@@ -220,14 +220,14 @@ CGFloat const SGProgressBarHeight = 2.5;
 - (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor
 {
 	UIView *progressView = [self setupSGProgressSubviewWithTintColor:tintColor];
-	
+
 	float maxWidth = self.navigationBar.frame.size.width;
-	
+
 	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
 		CGRect progressFrame = progressView.frame;
 		progressFrame.size.width = maxWidth;
 		progressView.frame = progressFrame;
-		
+
 	} completion:^(BOOL finished) {
 		[UIView animateWithDuration:0.5 animations:^{
 			progressView.alpha = 0;
@@ -243,7 +243,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 {
 	[self changeSGProgressWithTitle:title];
 	[self showSGProgressWithMaskAndDuration:duration];
-	
+
 }
 
 - (void)showSGProgressWithMaskAndDuration:(float)duration
@@ -252,13 +252,13 @@ CGFloat const SGProgressBarHeight = 2.5;
 	self.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
 	[self setupSGProgressMask];
 	[self showSGProgressWithDuration:duration andTintColor:tintColor];
-	
+
 }
 
 - (void)finishSGProgress
 {
 	UIView *progressView = [self setupSGProgressSubview];
-	
+
 	if(progressView)
 	{
 		[UIView animateWithDuration:0.1 animations:^{
@@ -270,24 +270,24 @@ CGFloat const SGProgressBarHeight = 2.5;
 }
 
 - (void)cancelSGProgress {
-    UIView *progressView = [self setupSGProgressSubview];
+	UIView *progressView = [self setupSGProgressSubview];
 
-    if(progressView)
-    {
-        [UIView animateWithDuration:0.5 animations:^{
-            progressView.alpha = 0;
-        } completion:^(BOOL finished) {
-            [progressView removeFromSuperview];
-            [self removeSGMask];
-            [self resetTitle];
-        }];
-    }
+	if(progressView)
+	{
+		[UIView animateWithDuration:0.5 animations:^{
+			progressView.alpha = 0;
+		} completion:^(BOOL finished) {
+			[progressView removeFromSuperview];
+			[self removeSGMask];
+			[self resetTitle];
+		}];
+	}
 }
 
 - (void)setSGProgressMaskWithPercentage:(float)percentage
 {
 	UIColor *tintColor = self.navigationBar.tintColor;
-	
+
 	if([NSThread isMainThread])
 	{
 		[self setTintModeAndSetupMask];
@@ -298,7 +298,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 			[self setTintModeAndSetupMask];
 		});
 	}
-	
+
 	[self setSGProgressPercentage:percentage andTintColor:tintColor];
 }
 
@@ -329,7 +329,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	{
 		percentage = 0;
 	}
-	
+
 	if([NSThread isMainThread])
 	{
 		[self viewUpdatesForPercentage:percentage andTintColor:tintColor];
