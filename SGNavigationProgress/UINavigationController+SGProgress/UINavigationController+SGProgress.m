@@ -34,7 +34,6 @@ CGFloat const SGProgressBarHeight = 2.5;
 		CGRectDivide(self.navigationBar.bounds, &slice, &remainder, SGProgressBarHeight, CGRectMaxYEdge);
 		_progressView = [[SGProgressView alloc] initWithFrame:slice];
 		_progressView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-		_progressView.tintColor = self.navigationBar.tintColor; // Default tintColor
 		[self.navigationBar addSubview:_progressView];
 	}
 
@@ -200,19 +199,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 - (void)showSGProgressWithDuration:(float)duration
 {
-	[self showSGProgressWithDuration:duration andTintColor:self.navigationBar.tintColor];
-}
-
-- (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor andTitle:(NSString *)title
-{
-	[self changeSGProgressWithTitle:title];
-	[self showSGProgressWithDuration:duration andTintColor:tintColor];
-}
-
-- (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor
-{
 	SGProgressView *progressView = [self progressView];
-	progressView.tintColor = tintColor;
 
 	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
 		progressView.progress = 1;
@@ -227,18 +214,28 @@ CGFloat const SGProgressBarHeight = 2.5;
 	}];
 }
 
-- (void)showSGProgressWithMaskAndDuration:(float)duration andTitle:(NSString *) title
+- (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor
+{
+	[[self progressView] setTintColor:tintColor];
+	[self showSGProgressWithDuration:duration];
+}
+
+- (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor andTitle:(NSString *)title
 {
 	[self changeSGProgressWithTitle:title];
-	[self showSGProgressWithMaskAndDuration:duration];
-
+	[self showSGProgressWithDuration:duration andTintColor:tintColor];
 }
 
 - (void)showSGProgressWithMaskAndDuration:(float)duration
 {
-	UIColor *tintColor = self.navigationBar.tintColor;
 	[self setupSGProgressMask];
-	[self showSGProgressWithDuration:duration andTintColor:tintColor];
+	[self showSGProgressWithDuration:duration];
+}
+
+- (void)showSGProgressWithMaskAndDuration:(float)duration andTitle:(NSString *) title
+{
+	[self changeSGProgressWithTitle:title];
+	[self showSGProgressWithMaskAndDuration:duration];
 }
 
 - (void)finishSGProgress
@@ -261,34 +258,9 @@ CGFloat const SGProgressBarHeight = 2.5;
 	}];
 }
 
-- (void)setSGProgressMaskWithPercentage:(float)percentage
-{
-	UIColor *tintColor = self.navigationBar.tintColor;
-	[self setupSGProgressMask];
-	[self setSGProgressPercentage:percentage andTintColor:tintColor];
-}
-
-- (void)setSGProgressMaskWithPercentage:(float)percentage andTitle:(NSString *)title
-{
-	[self changeSGProgressWithTitle:title];
-	[self setSGProgressMaskWithPercentage:percentage];
-}
-
 - (void)setSGProgressPercentage:(float)percentage
 {
-	[self setSGProgressPercentage:percentage andTintColor:self.navigationBar.tintColor];
-}
-
-- (void)setSGProgressPercentage:(float)percentage andTitle:(NSString *)title
-{
-	[self changeSGProgressWithTitle:title];
-	[self setSGProgressPercentage:percentage andTintColor:self.navigationBar.tintColor];
-}
-
-- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor
-{
 	SGProgressView *progressView = [self progressView];
-	progressView.tintColor = tintColor;
 
 	[UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
 		progressView.progress = percentage / 100.f;
@@ -305,6 +277,30 @@ CGFloat const SGProgressBarHeight = 2.5;
 			}];
 		}
 	}];
+}
+
+- (void)setSGProgressPercentage:(float)percentage andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
+	[self setSGProgressPercentage:percentage];
+}
+
+- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor
+{
+	[[self progressView] setTintColor:tintColor];
+	[self setSGProgressPercentage:percentage];
+}
+
+- (void)setSGProgressMaskWithPercentage:(float)percentage
+{
+	[self setSGProgressPercentage:percentage];
+	[self setupSGProgressMask];
+}
+
+- (void)setSGProgressMaskWithPercentage:(float)percentage andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
+	[self setSGProgressMaskWithPercentage:percentage];
 }
 
 @end
