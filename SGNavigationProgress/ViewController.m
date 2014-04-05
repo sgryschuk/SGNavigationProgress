@@ -79,7 +79,9 @@
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
-		[self.navigationController setSGProgressPercentage:percentage];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.navigationController setSGProgressPercentage:percentage];
+		});
 		if(percentage >= 100.0)
 		{
 			return;
@@ -97,7 +99,9 @@
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
-		[self.navigationController setSGProgressMaskWithPercentage:percentage];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.navigationController setSGProgressMaskWithPercentage:percentage];
+		});
 		if(percentage >= 100.0)
 		{
 			return;
@@ -115,7 +119,9 @@
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
-		[self.navigationController setSGProgressPercentage:percentage andTitle:@"Sending..."];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.navigationController setSGProgressPercentage:percentage andTitle:@"Sending..."];
+		});
 		if(percentage >= 100.0)
 		{
 			return;
@@ -133,7 +139,9 @@
 	{
 		NSLog(@"%f", percentage);
 		[NSThread sleepForTimeInterval:0.1];
-		[self.navigationController setSGProgressMaskWithPercentage:percentage andTitle:@"Sending..."];
+		dispatch_async(dispatch_get_main_queue(), ^{
+			[self.navigationController setSGProgressMaskWithPercentage:percentage andTitle:@"Sending..."];
+		});
 		if(percentage >= 100.0)
 		{
 			return;

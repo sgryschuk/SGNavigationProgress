@@ -22,6 +22,7 @@
 		45E7625F17EC9535005838A5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 45E7625D17EC9535005838A5 /* InfoPlist.strings */; };
 		45E7626117EC9535005838A5 /* SGNavigationProgressTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E7626017EC9535005838A5 /* SGNavigationProgressTests.m */; };
 		45E7626D17EC9593005838A5 /* UINavigationController+SGProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E7626C17EC9593005838A5 /* UINavigationController+SGProgress.m */; };
+		B5EC426518D94F6A001FE164 /* SGProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = B5EC426418D94F6A001FE164 /* SGProgressView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,8 @@
 		45E7626017EC9535005838A5 /* SGNavigationProgressTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SGNavigationProgressTests.m; sourceTree = "<group>"; };
 		45E7626B17EC9593005838A5 /* UINavigationController+SGProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UINavigationController+SGProgress.h"; sourceTree = "<group>"; };
 		45E7626C17EC9593005838A5 /* UINavigationController+SGProgress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UINavigationController+SGProgress.m"; sourceTree = "<group>"; };
+		B5EC426318D94F6A001FE164 /* SGProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SGProgressView.h; sourceTree = "<group>"; };
+		B5EC426418D94F6A001FE164 /* SGProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SGProgressView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,6 +164,8 @@
 			children = (
 				45E7626B17EC9593005838A5 /* UINavigationController+SGProgress.h */,
 				45E7626C17EC9593005838A5 /* UINavigationController+SGProgress.m */,
+				B5EC426318D94F6A001FE164 /* SGProgressView.h */,
+				B5EC426418D94F6A001FE164 /* SGProgressView.m */,
 			);
 			path = "UINavigationController+SGProgress";
 			sourceTree = "<group>";
@@ -263,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45E7624C17EC9535005838A5 /* ViewController.m in Sources */,
+				B5EC426518D94F6A001FE164 /* SGProgressView.m in Sources */,
 				45E7624617EC9535005838A5 /* AppDelegate.m in Sources */,
 				45E7626D17EC9593005838A5 /* UINavigationController+SGProgress.m in Sources */,
 				45E7624217EC9535005838A5 /* main.m in Sources */,
