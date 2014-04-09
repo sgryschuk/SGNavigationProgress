@@ -13,7 +13,7 @@ Manual: add UINavigationController+SGProgress.h and UINavigationController+SGPro
 ## Usage
 
 ### set duration
-`[self.self.navigationController showSGProgress];	//defaults to 3 seconds`
+`[self.navigationController showSGProgress];	//defaults to 3 seconds`
 `[self.navigationController showSGProgressWithDuration:3];  //uses the navbar tint color`
 `[self.navigationController showSGProgressWithDuration:3 andTintColor:[UIColor blueColor];`
 `[self.navigationController showSGProgressWithDuration:3 andTintColor:[UIColor blueColor] andTitle:@"Sending..."];`
