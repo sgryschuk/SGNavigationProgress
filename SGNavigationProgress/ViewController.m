@@ -9,7 +9,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-@property(nonatomic, getter = isCanceled) BOOL canceled;
+@property(nonatomic, weak) NSBlockOperation *currentProgress;
 @end
 
 @implementation ViewController
@@ -43,112 +43,70 @@
 
 - (IBAction)cancelPressed:(id)sender
 {
-    self.canceled = YES;
+    [self.currentProgress cancel];
     [self.navigationController cancelSGProgress];
 }
 
 - (IBAction)startPercentagePressed:(id)sender
 {
-    self.canceled = NO;
-	[self performSelectorInBackground:@selector(runPercentageLoop) withObject:nil];
+    __weak typeof(self)weakSelf = self;
+    [self simulateProgressWithAction:^(float percentage) {
+        [weakSelf.navigationController setSGProgressPercentage:percentage];
+    }];
 }
 
 - (IBAction)startMaskWithPercentagePressed:(id)sender
 {
-    self.canceled = NO;
-	[self performSelectorInBackground:@selector(runMaskPercentageLoop) withObject:nil];
+    __weak typeof(self)weakSelf = self;
+    [self simulateProgressWithAction:^(float percentage) {
+        [weakSelf.navigationController setSGProgressMaskWithPercentage:percentage];
+    }];
 }
 
 - (IBAction)startPercentageTitlePressed:(id)sender
 {
-    self.canceled = NO;
-	[self performSelectorInBackground:@selector(runTitlePercentageLoop) withObject:nil];
+    __weak typeof(self)weakSelf = self;
+    [self simulateProgressWithAction:^(float percentage) {
+        [weakSelf.navigationController setSGProgressPercentage:percentage andTitle:@"Sending..."];
+    }];
 }
 
 - (IBAction)startMaskTitleWithPercentagePressed:(id)sender
 {
-    self.canceled = NO;
-	[self performSelectorInBackground:@selector(runMaskTitlePercentageLoop) withObject:nil];
+    __weak typeof(self)weakSelf = self;
+    [self simulateProgressWithAction:^(float percentage) {
+        [weakSelf.navigationController setSGProgressMaskWithPercentage:percentage andTitle:@"Sending..."];
+    }];
 }
 
-- (void)runPercentageLoop
+- (void)simulateProgressWithAction:(void (^)(float percentage))displayProgress
 {
-	float percentage = 0;
-	
-	while (percentage <= 200 && !self.canceled)
-	{
-		NSLog(@"%f", percentage);
-		[NSThread sleepForTimeInterval:0.1];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.navigationController setSGProgressPercentage:percentage];
-		});
-		if(percentage >= 100.0)
-		{
-			return;
-		}
-		
-		percentage = percentage + (arc4random() % 3);
-	}
-}
+    [self.currentProgress cancel];
+    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    NSBlockOperation *operation = [[NSBlockOperation alloc] init];
 
-- (void)runMaskPercentageLoop
-{
-	float percentage = 0;
-	
-	while (percentage <= 200 && !self.canceled)
-	{
-		NSLog(@"%f", percentage);
-		[NSThread sleepForTimeInterval:0.1];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.navigationController setSGProgressMaskWithPercentage:percentage];
-		});
-		if(percentage >= 100.0)
-		{
-			return;
-		}
-		
-		percentage = percentage + (arc4random() % 3);
-	}
-}
+    __weak NSBlockOperation *weakOp = operation;
+    [operation addExecutionBlock:^{
+        float percentage = 0;
 
-- (void)runTitlePercentageLoop
-{
-	float percentage = 0;
-	
-	while (percentage <= 200 && !self.canceled)
-	{
-		NSLog(@"%f", percentage);
-		[NSThread sleepForTimeInterval:0.1];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.navigationController setSGProgressPercentage:percentage andTitle:@"Sending..."];
-		});
-		if(percentage >= 100.0)
-		{
-			return;
-		}
-		
-		percentage = percentage + (arc4random() % 3);
-	}
-}
+        while (![weakOp isCancelled])
+        {
+            NSLog(@"%f", percentage);
+            [NSThread sleepForTimeInterval:0.1];
+            [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+                displayProgress(percentage);
+            }];
 
-- (void)runMaskTitlePercentageLoop
-{
-	float percentage = 0;
-	
-	while (percentage <= 200 && !self.canceled)
-	{
-		NSLog(@"%f", percentage);
-		[NSThread sleepForTimeInterval:0.1];
-		dispatch_async(dispatch_get_main_queue(), ^{
-			[self.navigationController setSGProgressMaskWithPercentage:percentage andTitle:@"Sending..."];
-		});
-		if(percentage >= 100.0)
-		{
-			return;
-		}
-		
-		percentage = percentage + (arc4random() % 3);
-	}
+            if (percentage >= 100)
+            {
+                return;
+            }
+            percentage += (arc4random() % 3);
+        }
+    }];
+    [queue addOperation:operation];
+
+    self.currentProgress = operation;
 }
 
 @end
