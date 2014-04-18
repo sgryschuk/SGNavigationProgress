@@ -12,27 +12,29 @@ Manual: add UINavigationController+SGProgress.h and UINavigationController+SGPro
 
 ## Usage
 
-### set duration
-`[self.navigationController showSGProgress];	//defaults to 3 seconds`
-`[self.navigationController showSGProgressWithDuration:3];  //uses the navbar tint color`
-`[self.navigationController showSGProgressWithDuration:3 andTintColor:[UIColor blueColor];`
-`[self.navigationController showSGProgressWithDuration:3 andTintColor:[UIColor blueColor] andTitle:@"Sending..."];`
-`[self.navigationController showSGProgressWithMaskAndDuration:3];`
-`[self.navigationController showSGProgressWithMaskAndDuration:3 andTitle:@"Sending..."];`
+### Set Duration
+```objc
+[self.navigationController showSGProgress];	//defaults to 3 seconds
+[self.navigationController showSGProgressWithDuration:3];  //uses the navbar tint color
+[self.navigationController showSGProgressWithDuration:3 andTintColor:[UIColor blueColor];
+[self.navigationController showSGProgressWithDuration:3 andTintColor:[UIColor blueColor] andTitle:@"Sending..."];
+[self.navigationController showSGProgressWithMaskAndDuration:3];
+[self.navigationController showSGProgressWithMaskAndDuration:3 andTitle:@"Sending..."];
 
-`[self.navigationController finishSGProgress]; //finish animation early`
+[self.navigationController finishSGProgress]; //finish animation early
+```
 
-### custom percentage
+### Custom Percentage
 
-`- (void)setSGProgressPercentage:(float)percentage;`
-`- (void)setSGProgressPercentage:(float)percentage andTitle:(NSString *)title;`
-`- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor;`
-`- (void)setSGProgressMaskWithPercentage:(float)percentage;`
-`- (void)setSGProgressMaskWithPercentage:(float)percentage andTitle:(NSString *)title;`
+```objc
+- (void)setSGProgressPercentage:(float)percentage;
+- (void)setSGProgressPercentage:(float)percentage andTitle:(NSString *)title;
+- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor;
+- (void)setSGProgressMaskWithPercentage:(float)percentage;
+- (void)setSGProgressMaskWithPercentage:(float)percentage andTitle:(NSString *)title;
 
-`[SVHTTPRequest POST:URL parameters:@{} progress:^(float progress) {[self.navigationController setSGProgressPercentage:progress * 100];} completion:^(id response, NSHTTPURLResponse *urlResponse, NSError *error) {}];`
-
-
+[SVHTTPRequest POST:URL parameters:@{} progress:^(float progress) {[self.navigationController setSGProgressPercentage:progress * 100];} completion:^(id response, NSHTTPURLResponse *urlResponse, NSError *error) {}];
+```
 
 ## License
 
