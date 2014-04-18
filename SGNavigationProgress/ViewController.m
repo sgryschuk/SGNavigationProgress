@@ -38,7 +38,8 @@
 
 - (IBAction)finishPressed:(id)sender
 {
-	[self.navigationController finishSGProgress];
+	[self.currentProgress cancel];
+	[self.navigationController performSelector:@selector(finishSGProgress) withObject:nil afterDelay:0.1];
 }
 
 - (IBAction)cancelPressed:(id)sender
