@@ -203,14 +203,18 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
 		progressView.progress = 1;
+
 	} completion:^(BOOL finished) {
-		[UIView animateWithDuration:0.5 animations:^{
-			progressView.alpha = 0;
-		} completion:^(BOOL finished) {
-			[progressView removeFromSuperview];
-			[self removeSGMask];
-			[self resetTitle];
-		}];
+        if (finished)
+		{
+			[UIView animateWithDuration:0.5 animations:^{
+				progressView.alpha = 0;
+			} completion:^(BOOL finished) {
+				[progressView removeFromSuperview];
+				[self removeSGMask];
+				[self resetTitle];
+			}];
+		}
 	}];
 }
 
@@ -241,9 +245,17 @@ CGFloat const SGProgressBarHeight = 2.5;
 - (void)finishSGProgress
 {
 	SGProgressView *progressView = [self progressView];
-	[UIView animateWithDuration:0.1 animations:^{
-		progressView.progress = 1;
-	}];
+	progressView.progress = 0.99;	// Trigger animation with progress change
+
+	__weak typeof(self)weakSelf = self;
+	[UIView animateWithDuration:0.2
+						  delay:0
+						options:UIViewAnimationOptionBeginFromCurrentState
+					 animations:^{
+						 progressView.progress = 1;
+					 } completion:^(BOOL finished) {
+						 [weakSelf cancelSGProgress];
+					 }];
 }
 
 - (void)cancelSGProgress
