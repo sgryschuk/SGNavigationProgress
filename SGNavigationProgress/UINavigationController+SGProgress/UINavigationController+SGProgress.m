@@ -209,13 +209,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	} completion:^(BOOL finished) {
         if (finished)
 		{
-			[UIView animateWithDuration:0.5 animations:^{
-				progressView.alpha = 0;
-			} completion:^(BOOL finished) {
-				[progressView removeFromSuperview];
-				[self removeSGMask];
-				[self resetTitle];
-			}];
+			[self cancelSGProgress];
 		}
 	}];
 }
@@ -255,15 +249,11 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 	progressView.progress = 0.99;	// Trigger animation with progress change
 
-	__weak typeof(self)weakSelf = self;
-	[UIView animateWithDuration:0.2
-						  delay:0
-						options:UIViewAnimationOptionBeginFromCurrentState
-					 animations:^{
-						 progressView.progress = 1;
-					 } completion:^(BOOL finished) {
-						 [weakSelf cancelSGProgress];
-					 }];
+	[UIView animateWithDuration:0.2 animations:^{
+		progressView.progress = 1;
+	} completion:^(BOOL finished) {
+		[self cancelSGProgress];
+	}];
 }
 
 - (void)cancelSGProgress
@@ -293,13 +283,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	} completion:^(BOOL finished) {
 		if (percentage >= 100)
 		{
-			[UIView animateWithDuration:0.5 animations:^{
-				progressView.alpha = 0;
-			} completion:^(BOOL finished) {
-				[progressView removeFromSuperview];
-				[self removeSGMask];
-				[self resetTitle];
-			}];
+			[self cancelSGProgress];
 		}
 	}];
 }
