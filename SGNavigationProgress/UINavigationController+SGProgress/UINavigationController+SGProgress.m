@@ -247,7 +247,8 @@ CGFloat const SGProgressBarHeight = 2.5;
 	{
 		return;
 	}
-
+	
+	[self resetTitle];
 	progressView.progress = 0.99;	// Trigger animation with progress change
 
 	[UIView animateWithDuration:0.5 animations:^{
@@ -264,13 +265,14 @@ CGFloat const SGProgressBarHeight = 2.5;
 	{
 		return;
 	}
+	
+	[self resetTitle];
 
 	[UIView animateWithDuration:0.5 animations:^{
 		progressView.alpha = 0;
 	} completion:^(BOOL finished) {
 		[progressView removeFromSuperview];
 		[self removeSGMask];
-		[self resetTitle];
 	}];
 }
 
