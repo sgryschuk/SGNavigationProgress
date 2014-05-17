@@ -301,6 +301,34 @@ CGFloat const SGProgressBarHeight = 2.5;
 	[self setSGProgressPercentage:percentage];
 }
 
+- (void)setSGProgressPercentage:(float)percentage duration:(float)duration
+{
+	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
+
+	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+		progressView.progress = percentage / 100.f;
+
+	} completion:^(BOOL finished) {
+		if (percentage >= 100)
+		{
+			[self cancelSGProgress];
+		}
+	}];
+}
+
+- (void)setSGProgressPercentage:(float)percentage duration:(float)duration andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
+	[self setSGProgressPercentage:percentage duration:(float)duration];
+}
+
+- (void)setSGProgressPercentage:(float)percentage duration:(float)duration andTintColor:(UIColor *)tintColor
+{
+	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
+	[progressView setTintColor:tintColor];
+	[self setSGProgressPercentage:percentage duration:(float)duration];
+}
+
 - (void)setSGProgressMaskWithPercentage:(float)percentage
 {
 	[self setSGProgressPercentage:percentage];
