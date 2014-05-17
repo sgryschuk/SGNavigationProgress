@@ -37,6 +37,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	CGRectDivide(self.navigationBar.bounds, &slice, &remainder, SGProgressBarHeight, CGRectMaxYEdge);
 	SGProgressView *_progressView = [[SGProgressView alloc] initWithFrame:slice];
 	_progressView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+	_progressView.tintColor = [[[UIApplication sharedApplication] delegate] window].tintColor;
 	[self.navigationBar addSubview:_progressView];
 
 	return _progressView;
