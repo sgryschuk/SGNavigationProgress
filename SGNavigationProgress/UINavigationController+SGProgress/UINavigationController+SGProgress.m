@@ -28,14 +28,16 @@ CGFloat const SGProgressBarHeight = 2.5;
 		}
 	}
 
-	if (!_progressView)
-	{
-		CGRect slice, remainder;
-		CGRectDivide(self.navigationBar.bounds, &slice, &remainder, SGProgressBarHeight, CGRectMaxYEdge);
-		_progressView = [[SGProgressView alloc] initWithFrame:slice];
-		_progressView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-		[self.navigationBar addSubview:_progressView];
-	}
+	return _progressView;
+}
+
+- (SGProgressView *)newProgressView
+{
+	CGRect slice, remainder;
+	CGRectDivide(self.navigationBar.bounds, &slice, &remainder, SGProgressBarHeight, CGRectMaxYEdge);
+	SGProgressView *_progressView = [[SGProgressView alloc] initWithFrame:slice];
+	_progressView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+	[self.navigationBar addSubview:_progressView];
 
 	return _progressView;
 }
@@ -199,24 +201,23 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 - (void)showSGProgressWithDuration:(float)duration
 {
-	SGProgressView *progressView = [self progressView];
+	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
 
 	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
 		progressView.progress = 1;
+
 	} completion:^(BOOL finished) {
-		[UIView animateWithDuration:0.5 animations:^{
-			progressView.alpha = 0;
-		} completion:^(BOOL finished) {
-			[progressView removeFromSuperview];
-			[self removeSGMask];
-			[self resetTitle];
-		}];
+        if (finished)
+		{
+			[self cancelSGProgress];
+		}
 	}];
 }
 
 - (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor
 {
-	[[self progressView] setTintColor:tintColor];
+	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
+	[progressView setTintColor:tintColor];
 	[self showSGProgressWithDuration:duration];
 }
 
@@ -241,14 +242,28 @@ CGFloat const SGProgressBarHeight = 2.5;
 - (void)finishSGProgress
 {
 	SGProgressView *progressView = [self progressView];
-	[UIView animateWithDuration:0.1 animations:^{
+	if (!progressView)
+	{
+		return;
+	}
+
+	progressView.progress = 0.99;	// Trigger animation with progress change
+
+	[UIView animateWithDuration:0.2 animations:^{
 		progressView.progress = 1;
+	} completion:^(BOOL finished) {
+		[self cancelSGProgress];
 	}];
 }
 
 - (void)cancelSGProgress
 {
 	SGProgressView *progressView = [self progressView];
+	if (!progressView)
+	{
+		return;
+	}
+
 	[UIView animateWithDuration:0.5 animations:^{
 		progressView.alpha = 0;
 	} completion:^(BOOL finished) {
@@ -260,7 +275,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 - (void)setSGProgressPercentage:(float)percentage
 {
-	SGProgressView *progressView = [self progressView];
+	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
 
 	[UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
 		progressView.progress = percentage / 100.f;
@@ -268,13 +283,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 	} completion:^(BOOL finished) {
 		if (percentage >= 100)
 		{
-			[UIView animateWithDuration:0.5 animations:^{
-				progressView.alpha = 0;
-			} completion:^(BOOL finished) {
-				[progressView removeFromSuperview];
-				[self removeSGMask];
-				[self resetTitle];
-			}];
+			[self cancelSGProgress];
 		}
 	}];
 }
@@ -287,7 +296,8 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 - (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor
 {
-	[[self progressView] setTintColor:tintColor];
+	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
+	[progressView setTintColor:tintColor];
 	[self setSGProgressPercentage:percentage];
 }
 
