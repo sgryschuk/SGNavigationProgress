@@ -249,7 +249,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 	progressView.progress = 0.99;	// Trigger animation with progress change
 
-	[UIView animateWithDuration:0.2 animations:^{
+	[UIView animateWithDuration:0.5 animations:^{
 		progressView.progress = 1;
 	} completion:^(BOOL finished) {
 		[self cancelSGProgress];
