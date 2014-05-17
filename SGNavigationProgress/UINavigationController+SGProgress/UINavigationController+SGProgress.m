@@ -167,10 +167,10 @@ CGFloat const SGProgressBarHeight = 2.5;
 		[[NSUserDefaults standardUserDefaults] setObject:oldTitle forKey:kSGProgressOldTitle];
 		[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kSGProgressTitleChanged];
 		[[NSUserDefaults standardUserDefaults] synchronize];
-
-		//add animation
-		self.visibleViewController.navigationItem.title = title;
 	}
+	
+	//add animation, allows multiple title changes
+	self.visibleViewController.navigationItem.title = title;
 }
 
 #pragma mark - UIViewController
