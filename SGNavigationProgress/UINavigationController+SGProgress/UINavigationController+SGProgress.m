@@ -280,7 +280,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 {
 	SGProgressView *progressView = [self progressView] ?: [self newProgressView];
 
-	[UIView animateWithDuration:0.1 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
+	[UIView animateWithDuration:0.1 delay:0.5 options:UIViewAnimationOptionCurveLinear animations:^{
 		progressView.progress = percentage / 100.f;
 
 	} completion:^(BOOL finished) {
