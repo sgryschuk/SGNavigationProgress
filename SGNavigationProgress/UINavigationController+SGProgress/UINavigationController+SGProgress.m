@@ -147,9 +147,12 @@ CGFloat const SGProgressBarHeight = 2.5;
 
 	if(titleChanged)
 	{
-		NSString *oldTitle = [[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressOldTitle];
-		//add animation
-		self.visibleViewController.navigationItem.title = oldTitle;
+		NSString *loadingTitle = [[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressLoadingTitle];
+		if (loadingTitle && [loadingTitle isEqualToString:self.visibleViewController.navigationItem.title]) {
+			NSString *oldTitle = [[NSUserDefaults standardUserDefaults] objectForKey:kSGProgressOldTitle];
+			//add animation
+			self.visibleViewController.navigationItem.title = oldTitle;
+		}
 	}
 
 	[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kSGProgressTitleChanged];
@@ -166,6 +169,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 		NSString *oldTitle = self.visibleViewController.navigationItem.title;
 		[[NSUserDefaults standardUserDefaults] setObject:oldTitle forKey:kSGProgressOldTitle];
 		[[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kSGProgressTitleChanged];
+		[[NSUserDefaults standardUserDefaults] setObject:title forKey:kSGProgressLoadingTitle];
 		[[NSUserDefaults standardUserDefaults] synchronize];
 	}
 	
