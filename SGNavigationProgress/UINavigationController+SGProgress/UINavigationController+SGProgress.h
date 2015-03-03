@@ -13,6 +13,8 @@
 
 @interface UINavigationController (SGProgress)
 
+- (CGFloat)currentProgress;
+
 - (void)showSGProgress;
 - (void)showSGProgressWithDuration:(float)duration;
 - (void)showSGProgressWithDuration:(float)duration andTintColor:(UIColor *)tintColor;
