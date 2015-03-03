@@ -18,7 +18,7 @@ CGFloat const SGProgressBarHeight = 2.5;
 @implementation UINavigationController (SGProgress)
 
 - (CGFloat)currentProgress{
-    return [self progressView].progress;
+    return [self progressView].progress * 100;
 }
 
 - (SGProgressView *)progressView
