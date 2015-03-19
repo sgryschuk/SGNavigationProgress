@@ -1,5 +1,5 @@
 Pod::Spec.new do |s|
-  s.name = "SGNavigationProgress-JW"
+  s.name = "SGNavigationProgress"
   s.version = "1.2"
   s.summary = "A category for showing a Messages like progress view on a UINavigationBar"
   s.homepage = "https://github.com/sgryschuk/SGNavigationProgress"
