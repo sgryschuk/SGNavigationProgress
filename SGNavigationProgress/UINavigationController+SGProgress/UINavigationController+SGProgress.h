@@ -26,6 +26,7 @@
 - (void)setSGProgressPercentage:(float)percentage;
 - (void)setSGProgressPercentage:(float)percentage andTitle:(NSString *)title;
 - (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor;
+- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor andTitle:(NSString *)title;
 - (void)setSGProgressMaskWithPercentage:(float)percentage;
 - (void)setSGProgressMaskWithPercentage:(float)percentage andTitle:(NSString *)title;
 
