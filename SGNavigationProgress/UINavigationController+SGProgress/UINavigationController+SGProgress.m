@@ -291,6 +291,14 @@ CGFloat const SGProgressBarHeight = 2.5;
 	[self setSGProgressPercentage:percentage];
 }
 
+- (void)setSGProgressPercentage:(float)percentage andTintColor:(UIColor *)tintColor andTitle:(NSString *)title
+{
+	[self changeSGProgressWithTitle:title];
+	[[self progressView] setTintColor:tintColor];
+	[self setSGProgressPercentage:percentage];
+}
+
+
 - (void)setSGProgressMaskWithPercentage:(float)percentage
 {
 	[self setSGProgressPercentage:percentage];
